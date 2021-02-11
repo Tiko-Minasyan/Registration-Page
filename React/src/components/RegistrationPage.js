@@ -13,15 +13,13 @@ const RegistrationPage = (props) => (
 			axios.post('http://localhost:3000/register', data)
 			.then((res) => {
 				if(res.status == 201) {
-					
+					props.history.push("/")
 				}
-			})
-			.catch((e) => {
+			}).catch((e) => {
 				console.log(e)
 			})
 
 			console.log(data)
-			console.log(data.name)
 		}}
 	/>
   </div>
