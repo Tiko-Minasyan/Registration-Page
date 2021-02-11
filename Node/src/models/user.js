@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
-const validator = require('validator')
+const validator = require('validator');
+const jwt = require('jsonwebtoken');
 
 const userSchema = new mongoose.Schema({
 	name: {
@@ -37,8 +38,38 @@ const userSchema = new mongoose.Schema({
 		required: true,
 		minLength: 8,
 		trim: true
-	}
+	},
+	tokens: [{
+		token: {
+			type: String,
+			required: true
+		}
+	}]
 })
+
+userSchema.methods.generateAuthToken = async function() {
+	const user = this;
+	const token = jwt.sign({ _id: user._id.toString() }, 'secrettokenforregistration')
+
+	user.tokens = user.tokens.concat({ token });
+    await user.save();
+
+    return token;
+}
+
+userSchema.statics.findByCredentials = async (email, password) => {
+	const user = await User.findOne({ email });
+
+	if(!user) {
+		throw new Error('Unable to login')
+	}
+
+	if(password !== user.password) {
+		throw new Error('Wrong password')
+	}
+
+	return user
+}
 
 const User = mongoose.model('User', userSchema)
 
