@@ -1,0 +1,27 @@
+body {
+	background-color: #590061;
+}
+
+.loginDiv {
+	width: 600px;
+	margin: auto;
+	background-color: #cccccc;
+	margin-top: 200px;
+	text-align: center;
+	padding-top: 5px;
+	padding-bottom: $l-size;
+}
+
+.loginDiv input {
+	width: 60%;
+	margin-bottom: $s-size;
+}
+
+.loginDiv button {
+	width: 150px;
+	height: 30px;
+}
+
+.error {
+	color: red
+}
