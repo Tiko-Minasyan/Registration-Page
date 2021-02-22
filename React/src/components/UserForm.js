@@ -1,22 +1,51 @@
+import axios from "axios";
 import React from "react";
-import isEmail from 'validator/lib/isEmail'
+import isEmail from "validator/lib/isEmail";
+import Cookies from "universal-cookie"
 
 export default class UserForm extends React.Component {
 	constructor(props) {
 		super(props)
 
 		this.state = {
-			name: "asd",
+			name: "",
 			surname: "",
 			age: "",
-			email: "asd@asd.asd",
-			password: "asdasdasd",
-			confirmPassword: "asdasdasd",
+			email: "",
+			password: "",
+			confirmPassword: "",
+			oldPassword: "",
 			nameError: "",
 			emailError: "",
 			passwordError: "",
-			confirmPasswordError: ""
+			confirmPasswordError: "",
+			button: "Register",
+			editing: this.props.editing
 		}
+	}
+	componentDidMount() {
+		const cookies = new Cookies();
+		const token = cookies.get('token')
+		if(!!token) {
+			axios.post("http://localhost:3000/profile", {
+				token
+			}).then((res) => {
+				this.setState(() => ({
+					name: res.data.name,
+					surname: res.data.surname,
+					age: res.data.age,
+					email: res.data.email,
+					button: 'Edit info',
+					editing: true
+				}))
+			})
+		} else if(this.state.editing) {
+			console.log('Please log in')
+			this.props.history.push('/');
+		}
+	}
+	backButton = () => {
+		this.props.history.push('/');
 	}
 	onNameChange = (e) => {
 		const name = e.target.value
@@ -44,6 +73,10 @@ export default class UserForm extends React.Component {
 		const confirmPassword = e.target.value
 		this.setState(() => ({ confirmPassword }))
 	}
+	onOldPasswordChange = (e) => {
+		const oldPassword = e.target.value
+		this.setState(() => ({ oldPassword }))
+	}
 	onFormSubmit = (e) => {
 		e.preventDefault()
 
@@ -57,7 +90,7 @@ export default class UserForm extends React.Component {
 			confirmPasswordError: ""
 		}))
 
-		const { name, surname, age, email, password, confirmPassword } = this.state
+		let { name, surname, age, email, password, confirmPassword, editing, oldPassword } = this.state
 
 		if(!name) {
 			error = true
@@ -70,31 +103,50 @@ export default class UserForm extends React.Component {
 			error = true
 			this.setState(() => ({ emailError: "Wrong email address format!" }))
 		}
-		if(!password) {
+		if(!editing && !password) {
 			error = true
 			passwordHasError = true
 			this.setState(() => ({ passwordError: "Please write your password" }))
-		} else if(password.length < 8) {
+		} else if(password.length < 8 && (password.length > 0 || !editing)) {
 			error = true
 			passwordHasError = true
 			this.setState(() => ({ passwordError: "Password length should be at least 8" }))
 		}
-		if(!confirmPassword && !passwordHasError) {
+		if(!confirmPassword && !passwordHasError && (password.length > 0 || !editing)) {
 			error = true
 			this.setState(() => ({ confirmPasswordError: "Please confirm your password" }))
 		} else if(confirmPassword !== password && !passwordHasError) {
 			error = true
 			this.setState(() => ({ confirmPasswordError: "Passwords don't match!" }))
 		}
+		if(editing && !oldPassword && !passwordHasError && password.length > 0) {
+			error = true
+			this.setState(() => ({ passwordError: "Please fill in your old password" }))
+		}
+
+		if(!age) {
+			age = 0;
+		}
 
 		if(!error) {
-			this.props.onSubmit({
-				name,
-				surname,
-				age,
-				email,
-				password
-			})
+			if(!editing) {
+				this.props.onSubmit({
+					name,
+					surname,
+					age,
+					email,
+					password
+				})
+			} else {
+				this.props.onSubmit({
+					name,
+					surname,
+					age,
+					email,
+					password,
+					oldPassword
+				})
+			}
 		}
 	}
 	render() {
@@ -107,43 +159,51 @@ export default class UserForm extends React.Component {
 				<form onSubmit={this.onFormSubmit}>
 					<input
 						type='text'
-						placeholder='name'
+						placeholder='Name'
 						value={this.state.name}
 						onChange={this.onNameChange}
 						autoFocus
 					/>
 					<input
 						type='text'
-						placeholder='surname'
+						placeholder='Surname'
 						value={this.state.surname}
 						onChange={this.onSurnameChange}
 					/>
 					<input
 						type='text'
-						placeholder='age'
+						placeholder='Age'
 						value={this.state.age}
 						onChange={this.onAgeChange}
 					/>
 					<input
 						type='email'
-						placeholder='email'
+						placeholder='Email'
 						value={this.state.email}
 						onChange={this.onEmailChange}
 					/>
+					{this.state.editing &&
+					<input
+						type='Password'
+						placeholder='Old password (for updating password)'
+						value={this.state.oldPassword}
+						onChange={this.onOldPasswordChange}	
+					/>}
 					<input
 						type='password'
-						placeholder='password'
+						placeholder='Password'
 						value={this.state.password}
 						onChange={this.onPasswordChange}
 					/>
 					<input
 						type='password'
-						placeholder='confirm password'
+						placeholder='Confirm password'
 						value={this.state.confirmPassword}
 						onChange={this.onConfirmPasswordChange}
 					/>
 					<br />
-					<button>Register</button>
+					<p className='backArrow' onClick={this.backButton}>{'◄ Back'}</p>
+					<button id='signUpButton'>{this.state.button}</button>
 				</form>
 			</div>
 		)

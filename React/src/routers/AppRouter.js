@@ -1,10 +1,11 @@
 import React from "react";
-import { BrowserRouter, Route, Switch, Link, NavLink } from "react-router-dom";
+import { BrowserRouter, Route, Switch } from "react-router-dom";
 import NotFoundPage from "../components/NotFoundPage";
-import Header from "../components/Header";
 import LoginPage from "../components/LoginPage";
 import ProfilePage from "../components/ProfilePage";
 import RegistrationPage from "../components/RegistrationPage";
+import EditPage from "../components/EditPage";
+import DeletePage from "../components/DeletePage";
 
 const AppRouter = () => (
   <BrowserRouter>
@@ -13,6 +14,8 @@ const AppRouter = () => (
         <Route path="/" component={LoginPage} exact={true} />
         <Route path="/register" component={RegistrationPage} />
         <Route path="/profile" component={ProfilePage} />
+		<Route path="/edit" component={EditPage} />
+		<Route path="/delete" component={DeletePage} />
         <Route component={NotFoundPage} />
       </Switch>
     </div>
@@ -20,5 +23,3 @@ const AppRouter = () => (
 );
 
 export default AppRouter;
-
-// <Header />

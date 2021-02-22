@@ -1,28 +1,41 @@
 import React from "react";
 import { Link } from "react-router-dom";
-import UserForm from "../components/UserForm"
-import axios from "axios"
+import UserForm from "../components/UserForm";
+import axios from "axios";
+import Cookies from "universal-cookie";
 
-const RegistrationPage = (props) => (
-	<div className='loginDiv'>
-    <h1>Register to create a new account</h1>
-	<p>Fill in the info to create a new account, or log in to your existing one <Link to="/">here</Link></p>
-	
-	<UserForm
-		onSubmit={(data) => {
-			axios.post('http://localhost:3000/register', data)
-			.then((res) => {
-				if(res.status == 201) {
-					props.history.push("/")
-				}
-			}).catch((e) => {
-				console.log(e)
-			})
+export default class RegistrationPage extends React.Component {
+	constructor(props) {
+		super(props)
+	}
+	componentDidMount() {
+		const cookies = new Cookies();
+		if(!!cookies.get('token')) this.props.history.push('/profile');
+	}
 
-			console.log(data)
-		}}
-	/>
-  </div>
-);
-
-export default RegistrationPage;
+	render() {
+		return (
+			<div className='container'>
+				<div className='loginDiv'>
+					<h1>Register to create a new account</h1>
+					
+					<UserForm
+						history={this.props.history}
+						onSubmit={(data) => {
+							axios.post('http://localhost:3000/register', data)
+							.then((res) => {
+								if(res.status == 201) {
+									const cookies = new Cookies();
+									cookies.set('token', res.data);
+									this.props.history.push("/profile")
+								}
+							}).catch((e) => {
+								console.log(e.response.data)
+							})
+						}}
+					/>
+				</div>
+			</div>
+		)
+	}
+};

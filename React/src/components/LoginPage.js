@@ -1,20 +1,25 @@
 import axios from "axios";
 import React from "react";
 import { Link } from "react-router-dom";
-import isEmail from 'validator/lib/isEmail'
+import isEmail from 'validator/lib/isEmail';
+import Cookies from "universal-cookie";
 
 export default class LoginPage extends React.Component {
 	constructor(props) {
 		super(props);
 
 		this.state = {
-			email: "asd@asd.asd",
-			password: "asdasdasd",
+			email: "",
+			password: "",
 			emailError: "",
 			passwordError: ""
 		}
 	}
 
+	componentDidMount() {
+		const cookies = new Cookies();
+		if(!!cookies.get('token')) this.props.history.push('/profile')
+	}
 	onEmailChange = (e) => {
 		const email = e.target.value
 		this.setState(() => ({ email }))
@@ -58,33 +63,43 @@ export default class LoginPage extends React.Component {
 				email,
 				password
 			}).then((res) => {
-				console.log(res)
-			}).catch((e) => console.log(e))
+				const cookie = new Cookies();
+				cookie.set('token', res.data);
+				this.props.history.push("/profile")
+			}).catch((e) => {
+				this.setState(() => ({ emailError: "Incorrect email or password!" }))
+			})
 		}
+	}
+	register = () => {
+		this.props.history.push("/register")
 	}
 	
 	render() {
 		return (
-			<div className='loginDiv'>
-				<h1>Log in to your account</h1>
-				<p>Write your email and password to log in, or create a new account <Link to="/register">here</Link></p>
-				{this.state.emailError && <p className='error'>{this.state.emailError}</p>}
-				{this.state.passwordError && <p className='error'>{this.state.passwordError}</p>}
-				<form onSubmit={this.onFormSubmit}>
-					<input
-						type="email"
-						placeholder="Email"
-						value={this.state.email}
-						onChange={this.onEmailChange}
-					/>
-					<input
-						type="password"
-						placeholder="Password"
-						value={this.state.password}
-						onChange={this.onPasswordChange}
-					/> <br />
-					<button id='loginButton'>Log in</button>
-				</form>
+			<div className='container'>
+				<div className='loginDiv'>
+					<h1 className='loginTitle'>Tiko's Registration Page</h1>
+						{this.state.emailError && <p className='error'>{this.state.emailError}</p>}
+					{this.state.passwordError && <p className='error'>{this.state.passwordError}</p>}
+					<form onSubmit={this.onFormSubmit}>
+						<input
+							type="email"
+							placeholder="Email"
+							value={this.state.email}
+							onChange={this.onEmailChange}
+						/>
+						<input
+							type="password"
+							placeholder="Password"
+							value={this.state.password}
+							onChange={this.onPasswordChange}
+						/> <br />
+						<button id='loginButton'>Log in</button>
+						<p className='loginLine'>If you don't have an account, you can create one</p>
+						<button id='signUpButton' onClick={this.register}>Sign up</button>
+					</form>
+				</div>
 			</div>
 		)
 	}
