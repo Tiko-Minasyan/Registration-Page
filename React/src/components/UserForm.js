@@ -156,6 +156,7 @@ export default class UserForm extends React.Component {
 				{this.state.emailError && <p className='error'>{this.state.emailError}</p>}
 				{this.state.passwordError && <p className='error'>{this.state.passwordError}</p>}
 				{this.state.confirmPasswordError && <p className='error'>{this.state.confirmPasswordError}</p>}
+				<p id='emailError'></p>
 				<form onSubmit={this.onFormSubmit}>
 					<input
 						type='text'

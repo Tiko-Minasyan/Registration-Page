@@ -22,6 +22,7 @@ export default class RegistrationPage extends React.Component {
 					<UserForm
 						history={this.props.history}
 						onSubmit={(data) => {
+							document.getElementById('emailError').innerHTML = ''
 							axios.post('http://localhost:3000/register', data)
 							.then((res) => {
 								if(res.status == 201) {
@@ -31,6 +32,9 @@ export default class RegistrationPage extends React.Component {
 								}
 							}).catch((e) => {
 								console.log(e.response.data)
+								if(e.response.data.code && e.response.data.code == 11000) {
+									document.getElementById('emailError').innerHTML = 'This email address is already registered'
+								}
 							})
 						}}
 					/>

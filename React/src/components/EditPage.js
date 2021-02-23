@@ -13,6 +13,7 @@ const RegistrationPage = (props) => (
 			editing={true}
 			history={props.history}
 			onSubmit={(data) => {
+				document.getElementById('emailError').innerHTML = ''
 				const cookies = new Cookies()
 				axios.patch('http://localhost:3000/edit', {
 					...data,
@@ -24,6 +25,11 @@ const RegistrationPage = (props) => (
 					}
 				}).catch((e) => {
 					console.log(e.response.data)
+					if(e.response.data.code && e.response.data.code == 11000) {
+						document.getElementById('emailError').innerHTML = 'This email address is already registered'
+					} else {
+						document.getElementById('emailError').innerHTML = 'Incorrect password!'
+					}					
 				})
 			}}
 		/>
