@@ -14,9 +14,8 @@ const RegistrationPage = (props) => (
 				onClick={() => {
 					const cookies = new Cookies();
 
-					axios.post('http://localhost:3000/delete', {
-						token: cookies.get('token')
-					}).then(() => {
+					axios.get('http://localhost:3000/delete')
+					.then(() => {
 						cookies.remove('token');
 						props.history.push('/');
 					}).catch((e) => console.log(e));

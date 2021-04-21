@@ -29,7 +29,7 @@ router.post('/login', async (req, res) => {
 	}
 })
 
-router.post('/profile', auth, async (req, res) => {
+router.get('/profile', auth, async (req, res) => {
 	try {
 		res.send(req.user);
 	} catch (e) {
@@ -70,7 +70,7 @@ router.patch('/edit', auth, async (req, res) => {
 	}
 })
 
-router.post('/logout', auth, async (req, res) => {
+router.get('/logout', auth, async (req, res) => {
 	try {
 		req.user.tokens = req.user.tokens.filter((token) => token.token !== req.token);
 		await req.user.save();
@@ -81,7 +81,7 @@ router.post('/logout', auth, async (req, res) => {
 	}
 })
 
-router.post('/delete', auth, async (req, res) => {
+router.get('/delete', auth, async (req, res) => {
 	try {
 		await req.user.remove();
 		res.send();
@@ -106,7 +106,7 @@ router.get('/verifyEmail', async (req, res) => {
 	}
 })
 
-router.post('/sendVerify', auth, async (req, res) => {
+router.get('/sendVerify', auth, async (req, res) => {
 	try {
 		req.user.sendVerificationEmail(2);
 		res.send();

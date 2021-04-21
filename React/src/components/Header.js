@@ -1,19 +1,22 @@
 import React from "react";
-import { NavLink } from "react-router-dom";
+import { Nav, Navbar } from "react-bootstrap";
+import { Link } from 'react-router-dom';
+import 'bootstrap/dist/css/bootstrap.min.css';
 
 const Header = () => (
-  <header>
-    <h1>Portfolio</h1>
-    <NavLink to="/" activeClassName="is-active" exact={true}>
-      Dashboard
-    </NavLink>
-    <NavLink to="/portfolio" activeClassName="is-active" exact={true}>
-      Portfolio
-    </NavLink>
-    <NavLink to="/contact" activeClassName="is-active">
-      Contact
-    </NavLink>
-  </header>
+	<Navbar expand='lg' className='nav'>
+		<Navbar.Collapse id='navbar-nav'>
+			<Nav className='ml-auto'>
+				<Nav.Item>
+					<Link className='link mr-3' to='/'>Profile</Link>
+				</Nav.Item>
+				<Nav.Item>
+					<Link className='link mr-3' to='/edit'>Edit</Link>
+				</Nav.Item>
+				<Nav.Item id='logoutItem' className='link mr-3'>Log out</Nav.Item>
+			</Nav>
+		</Navbar.Collapse>
+	</Navbar>
 );
 
 export default Header;

@@ -1,8 +1,8 @@
 import axios from "axios";
 import React from "react";
-import { Link } from "react-router-dom";
 import isEmail from 'validator/lib/isEmail';
 import Cookies from "universal-cookie";
+import setupAxios from '../axios/setup';
 
 export default class LoginPage extends React.Component {
 	constructor(props) {
@@ -57,14 +57,13 @@ export default class LoginPage extends React.Component {
 		}
 
 		if(!error) {
-			// document.getElementById('loginButton').setAttribute('disabled', true)
-
 			axios.post('http://localhost:3000/login', {
 				email,
 				password
 			}).then((res) => {
 				const cookie = new Cookies();
 				cookie.set('token', res.data);
+				setupAxios();
 				this.props.history.push("/profile")
 			}).catch((e) => {
 				this.setState(() => ({ emailError: "Incorrect email or password!" }))
@@ -77,11 +76,11 @@ export default class LoginPage extends React.Component {
 	
 	render() {
 		return (
-			<div className='container'>
+			<div className='containerDiv'>
 				<div className='loginDiv'>
 					<h1 className='loginTitle'>Tiko's Registration Page</h1>
 						{this.state.emailError && <p className='error'>{this.state.emailError}</p>}
-					{this.state.passwordError && <p className='error'>{this.state.passwordError}</p>}
+						{this.state.passwordError && <p className='error'>{this.state.passwordError}</p>}
 					<form onSubmit={this.onFormSubmit}>
 						<input
 							type="email"

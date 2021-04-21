@@ -1,8 +1,8 @@
 import React from "react";
-import { Link } from "react-router-dom";
 import UserForm from "../components/UserForm";
 import axios from "axios";
 import Cookies from "universal-cookie";
+import setupAxios from '../axios/setup';
 
 export default class RegistrationPage extends React.Component {
 	constructor(props) {
@@ -15,7 +15,7 @@ export default class RegistrationPage extends React.Component {
 
 	render() {
 		return (
-			<div className='container'>
+			<div className='containerDiv'>
 				<div className='loginDiv'>
 					<h1>Register to create a new account</h1>
 					
@@ -28,6 +28,7 @@ export default class RegistrationPage extends React.Component {
 								if(res.status == 201) {
 									const cookies = new Cookies();
 									cookies.set('token', res.data);
+									setupAxios();
 									this.props.history.push("/profile")
 								}
 							}).catch((e) => {

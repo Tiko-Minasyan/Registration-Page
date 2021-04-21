@@ -27,13 +27,12 @@ export default class UserForm extends React.Component {
 		const cookies = new Cookies();
 		const token = cookies.get('token')
 		if(!!token) {
-			axios.post("http://localhost:3000/profile", {
-				token
-			}).then((res) => {
+			axios.get("http://localhost:3000/profile")
+			.then((res) => {
 				this.setState(() => ({
 					name: res.data.name,
 					surname: res.data.surname,
-					age: res.data.age,
+					age: res.data.age || '',
 					email: res.data.email,
 					button: 'Edit info',
 					editing: true
@@ -122,10 +121,6 @@ export default class UserForm extends React.Component {
 		if(editing && !oldPassword && !passwordHasError && password.length > 0) {
 			error = true
 			this.setState(() => ({ passwordError: "Please fill in your old password" }))
-		}
-
-		if(!age) {
-			age = 0;
 		}
 
 		if(!error) {

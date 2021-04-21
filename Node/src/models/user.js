@@ -16,7 +16,6 @@ const userSchema = new mongoose.Schema({
 	},
 	age: {
 		type: Number,
-		default: 0,
 		validate(value) {
             if(value < 0) {
                 throw new Error('Age must be a positive number')
@@ -65,7 +64,7 @@ userSchema.methods.toJSON = function () {
 
 userSchema.methods.generateAuthToken = async function() {
 	const user = this;
-	const token = jwt.sign({ _id: user._id.toString() }, 'secrettokenforregistration')
+	const token = jwt.sign({ _id: user._id.toString() }, process.env.JWT_SECRET)
 
 	user.tokens = user.tokens.concat({ token });
     await user.save();
@@ -81,8 +80,8 @@ userSchema.methods.sendVerificationEmail = async function(action = 0) {
 		port: 465,
 		secure: true, // true for 465, false for other ports
 		auth: {
-		  user: 'tigran.minasyan2000@gmail.com',
-		  pass: 'TIKLINBLEK2000',
+		  user: process.env.EMAIL,
+		  pass: process.env.PASS,
 		},
 	});
 
